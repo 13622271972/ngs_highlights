@@ -1,12 +1,9 @@
 library(ggplot2)
 library(readr)
 library(patchwork)
-library(ggvoronoi)
-library(animation)
-library(gganimate)
 
 fetch_team_colors <- function(team_colors_=NULL, h_team_, a_team_, diverge_=FALSE) {
-  team_colors_ <- suppressMessages(readr::read_tsv("C:\\Users\\Administrator\\Desktop\\yourfile.tsv"))
+  team_colors_ <- suppressMessages(readr::read_tsv("https://raw.githubusercontent.com/asonty/ngs_highlights/master/utils/data/nfl_team_colors.tsv"))
   
   h_team_color1 <- team_colors_ %>% filter(teams == h_team_) %>% select(color1) %>% pull()
   h_team_color2 <- team_colors_ %>% filter(teams == h_team_) %>% select(color2) %>% pull()
@@ -124,12 +121,12 @@ plot_play_frame <- function(play_data_, frame_, velocities_=F, voronoi_=F, capti
   # * separate player and ball tracking data ----
   player_data <- play_data_ %>% 
     filter(frame == frame_) %>% 
-    select(frame, homeTeamFlag, teamAbbr, displayName, position, position, positionGroup,
+    select(frame, homeTeamFlag, teamAbbr, displayName, jerseyNumber, position, positionGroup,
            x, y, s, o, dir, event) %>% 
     filter(displayName != "ball")
   ball_data <- play_data_ %>% 
     filter(frame == frame_) %>% 
-    select(frame, homeTeamFlag, teamAbbr, displayName, position, position, positionGroup,
+    select(frame, homeTeamFlag, teamAbbr, displayName, jerseyNumber, position, positionGroup,
            x, y, s, o, dir, event) %>% 
     filter(displayName == "ball")
   
@@ -211,7 +208,7 @@ plot_play_frame <- function(play_data_, frame_, velocities_=F, voronoi_=F, capti
     ) +
     geom_text(
       data = player_data %>% filter(teamAbbr == a_team),
-      mapping = aes(x = x, y = y, label = position),
+      mapping = aes(x = x, y = y, label = jerseyNumber),
       color = a_team_color1, size = 3.5, #family = "mono"
     ) +
     # home team locs and jersey numbers
@@ -223,7 +220,7 @@ plot_play_frame <- function(play_data_, frame_, velocities_=F, voronoi_=F, capti
     ) +
     geom_text(
       data = player_data %>% filter(teamAbbr == h_team),
-      mapping = aes(x = x, y = y, label = position),
+      mapping = aes(x = x, y = y, label = jerseyNumber),
       color = h_team_color2, size = 3.5, #family = "mono"
     ) +
     # ball
@@ -288,6 +285,19 @@ plot_play_sequence <- function(play_data_, first_frame_, final_frame_, n_=9, vel
   
   return(play_sequence_plot)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
